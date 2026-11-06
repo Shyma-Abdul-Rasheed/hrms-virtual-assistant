@@ -8,3 +8,4 @@ hrms/
 app/__pycache__/
 db/__pycache__/
 routes/__pycache__/
+models/__pycache__/
