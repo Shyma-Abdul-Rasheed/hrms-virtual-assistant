@@ -9,3 +9,4 @@ argon2-cffi==25.1.0
 PyJWT==2.13.0
 pydantic[email]
 google-genai==2.10.0
+pgvector==0.5.1
