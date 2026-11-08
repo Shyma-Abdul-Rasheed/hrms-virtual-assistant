@@ -1,5 +1,5 @@
 from pydantic import BaseModel,Field
-from datetime import date
+from datetime import date,datetime
 from decimal import Decimal
 from typing import Literal
 
@@ -39,6 +39,7 @@ class LeaveRequestShow(BaseModel):
     days_requested: Decimal
     reason: str | None
     status: LeaveRequestStatus
+    submitted_at:datetime
     class Config:
         from_attributes=True
 

@@ -1,5 +1,6 @@
 from pydantic import BaseModel,Field
 from typing import Literal
+from datetime import datetime
 
 class LeaveApprovalCreate(BaseModel):
     leave_request_id: int
@@ -22,6 +23,7 @@ class LeaveApprovalResponse(BaseModel):
     leave_request_id: int
     decision: Literal["approved", "rejected"]
     comments: str | None
+    approved_at:datetime
     class Config:
         from_attributes=True
 
