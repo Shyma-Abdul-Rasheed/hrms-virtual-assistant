@@ -12,6 +12,7 @@ class DepartmentUpdate(BaseModel):
         from_attributes=True
 
 class DepartmentShow(BaseModel):
+    department_id:int
     department_name:str
     is_active:bool
     class Config:

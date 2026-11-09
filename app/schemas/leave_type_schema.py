@@ -17,6 +17,7 @@ class LeaveTypeUpdate(BaseModel):
         from_attributes=True
 
 class LeaveTypeShow(BaseModel):
+    leave_type_id:int
     leave_type_name: str
     description: str
     is_paid: bool

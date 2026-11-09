@@ -18,6 +18,7 @@ class EmployeeCreate(BaseModel):
 
 class EmployeeUpdate(BaseModel):
     full_name:str | None = None
+    email:str | None = None
     department_name:str | None = None
     designation:str | None = None
     role:Roles | None = None
@@ -39,6 +40,7 @@ class EmployeeLogin(BaseModel):
         from_attributes=True
 
 class EmployeeShow(BaseModel):
+    employee_id:int
     employee_code:str
     full_name:str
     email:EmailStr
