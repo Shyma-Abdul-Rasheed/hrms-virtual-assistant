@@ -2,7 +2,7 @@ from fastapi import HTTPException,status
 from app.models.employee_model import Employee
 from app.schemas.employee_schema import EmployeeCreate,EmployeeUpdate
 from sqlalchemy.orm import Session
-from app.repositories.employee_repo import existing_employee,create_new_employee,update_employee,get_one_employee,get_all_employees,get_employee_by_id,get_dept_employees
+from app.repositories.employee_repo import existing_employee,create_new_employee,update_employee,get_one_employee,get_all_employees,get_employee_by_id,get_dept_employees,get_one_employee_dept
 from app.repositories.department_repo import existing_department
 
 def create(request:EmployeeCreate,db:Session):
@@ -32,9 +32,12 @@ def  view_all(role:str,employee_id:int,db:Session):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
-def view_one(employee_id:int,db:Session):
+def view_one(user_id:int,role:str,employee_id:int,db:Session):
     try:
-        employee=get_one_employee(employee_id,db)
+        if role=="manager":
+            employee=get_one_employee_dept(user_id,employee_id,db)
+        else:
+            employee=get_one_employee(employee_id,db)
         if employee is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Employee not found")
         else:        
@@ -66,5 +69,12 @@ def update(employee_id:int,request:EmployeeUpdate,db:Session):
         return update_employee(check_employee,db)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+
+def view_me(employee_id:int,db:Session):
+    try:
+        return get_one_employee(employee_id,db)
+    except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+
 
   

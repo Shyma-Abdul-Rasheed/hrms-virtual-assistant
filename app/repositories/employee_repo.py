@@ -30,7 +30,7 @@ def get_all_employees(db:Session):
                 Department.department_name,
                 Employee.designation,
                 Employee.role,
-                Employee.is_active,
+                Employee.is_active
             )
             .join(Department,Department.department_id==Employee.department_id)
             .all()
@@ -38,6 +38,29 @@ def get_all_employees(db:Session):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
 
+def get_one_employee_dept(user_id:int,employee_id:int,db:Session):
+    try:
+        dept_id=db.query(Employee.department_id).filter(Employee.employee_id==user_id).scalar()
+        if dept_id is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Employee or department not found")
+        employee=db.query(
+            Employee.employee_id,
+            Employee.employee_code,
+            Employee.full_name,
+            Employee.email,
+            Department.department_name,
+            Employee.designation,
+            Employee.role,
+            Employee.is_active).join(
+                Department,Department.department_id==Employee.department_id).filter(
+                    Employee.department_id==dept_id,Employee.employee_id==employee_id).first()
+        if not employee:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="You cannot view this employee")
+        else:
+            return employee
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
+    
 def get_dept_employees(employee_id:int,db:Session):
     try:
         dept_id=db.query(Employee.department_id).filter(Employee.employee_id==employee_id).scalar()
@@ -53,7 +76,7 @@ def get_dept_employees(employee_id:int,db:Session):
                 Department.department_name,
                 Employee.designation,
                 Employee.role,
-                Employee.is_active,
+                Employee.is_active
             )
             .join(Department,Department.department_id==Employee.department_id)
             .filter(Employee.department_id==dept_id)
@@ -61,7 +84,6 @@ def get_dept_employees(employee_id:int,db:Session):
         )
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
-
 
 def get_one_employee(employee_id:int,db:Session):
     try:
@@ -74,7 +96,7 @@ def get_one_employee(employee_id:int,db:Session):
                         Department.department_name,
                         Employee.designation,
                         Employee.role,
-                        Employee.is_active,
+                        Employee.is_active
                     )
                     .join(Department,Department.department_id==Employee.department_id)
                     .filter(Employee.employee_id==employee_id)
