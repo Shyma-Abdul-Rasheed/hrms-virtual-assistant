@@ -6,12 +6,12 @@ hrms/
 
 #Python cache
 app/__pycache__/
-ai/__pycache__/
-api/__pycache__/
-core/__pycache__/
-db/__pycache__/
-models/__pycache__/
-repositories/__pycache__/
-schemas/__pycache__/
-services/__pycache__/
+app/ai/__pycache__/
+app/api/__pycache__/
+app/core/__pycache__/
+app/db/__pycache__/
+app/models/__pycache__/
+app/repositories/__pycache__/
+app/schemas/__pycache__/
+app/services/__pycache__/
 
