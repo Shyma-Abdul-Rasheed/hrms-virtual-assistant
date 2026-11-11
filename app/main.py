@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from app.db.connections import Base,engine
-from app.routes.check_connection import router
+from app.api.health import router
 from app.api.departments import department
 from app.api.employees import employee
 from app.api.auth import auth
