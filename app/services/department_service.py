@@ -30,16 +30,16 @@ def view_one(department_id:int,db:Session):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))    
 
-def update(department_id:int,department:DepartmentUpdate,db:Session):
+def update(department_id:int,request:DepartmentUpdate,db:Session):
     try:
-        check_department=get_department_by_id(department_id,db)
-        if check_department is None:
+        department=get_department_by_id(department_id,db)
+        if department is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Department not found")
-        if department.department_name is not None:
-            check_department.department_name=department.department_name
-        if department.is_active is not None:
-            check_department.is_active=department.is_active
-        return update_department(check_department,db)
+        if request.department_name is not None:
+            department.department_name=request.department_name
+        if request.is_active is not None:
+            department.is_active=request.is_active
+        return update_department(department,db)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
