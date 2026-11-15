@@ -5,8 +5,10 @@ from sqlalchemy.orm import Session
 from app.repositories.employee_repo import existing_employee,create_new_employee,update_employee,get_one_employee,get_all_employees,get_employee_by_id,get_dept_employees,get_one_employee_dept
 from app.repositories.department_repo import existing_department
 
-def create(request:EmployeeCreate,db:Session):
+def create(request:EmployeeCreate,db:Session,role:str):
     try:
+        if request.role == "hr" and role=="hr":
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="HR is not authorized to create another HR account")
         check_employee_exists=existing_employee(request.email,db)
         if check_employee_exists is not None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Employee already exists")

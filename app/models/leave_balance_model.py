@@ -1,10 +1,19 @@
 from app.db.connections import Base
-from sqlalchemy import Column,Integer,DateTime,ForeignKey,Computed,func,text
+from sqlalchemy import Column,Integer,DateTime,ForeignKey,Computed,func,text,UniqueConstraint
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
 class LeaveBalance(Base):
     __tablename__="leave_balances"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "employee_id",
+            "leave_type_id",
+            "year",
+            name="uq_employee_leave_type_year"
+        ),
+    )
 
     leave_balance_id=Column(Integer,primary_key=True,index=True)
     employee_id=Column(Integer,ForeignKey("employees.employee_id"),nullable=False)

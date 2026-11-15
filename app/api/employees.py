@@ -12,7 +12,7 @@ def add_employee(request:EmployeeCreate,db:Session = Depends(get_db),role:str = 
     try:
         if role is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Not Authorized")
-        return create(request,db)
+        return create(request,db,role)
     except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
