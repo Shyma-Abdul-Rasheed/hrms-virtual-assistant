@@ -21,14 +21,14 @@ def create_new_leave_type(leave_type:LeaveType,db:Session):
 def get_all_leave_types(db:Session):
     try:
         return db.query(LeaveType.leave_type_id,LeaveType.leave_type_name,LeaveType.description,
-                        LeaveType.is_paid,LeaveType.min_notice_days).all()
+        LeaveType.is_paid,LeaveType.min_notice_days).all()
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
 
 def get_one_leave_type(leave_type_id:int,db:Session):
     try:
         return db.query(LeaveType.leave_type_id,LeaveType.leave_type_name,LeaveType.description,
-                        LeaveType.is_paid,LeaveType.min_notice_days).filter(LeaveType.leave_type_id==leave_type_id).first()
+        LeaveType.is_paid,LeaveType.min_notice_days).filter(LeaveType.leave_type_id==leave_type_id).first()
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
 

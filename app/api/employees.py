@@ -39,7 +39,7 @@ def change_employee(employee_id:int,request:EmployeeUpdate,db:Session = Depends(
     try:
         if role is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Not Authorized")
-        return update(employee_id,request,db)
+        return update(employee_id,request,role,db)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 

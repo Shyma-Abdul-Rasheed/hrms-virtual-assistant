@@ -47,11 +47,13 @@ def view_one(user_id:int,role:str,employee_id:int,db:Session):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))    
 
-def update(employee_id:int,request:EmployeeUpdate,db:Session):
+def update(employee_id:int,request:EmployeeUpdate,role:str,db:Session):
     try:
         check_employee=get_employee_by_id(employee_id,db)
         if check_employee is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Employee not found")
+        if role=="hr" and check_employee.role=="hr":
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="HR is not authorized to update another HR account")
         if request.full_name is not None:
             check_employee.employee_name=request.employee_name
         if request.email is not None:

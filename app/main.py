@@ -5,6 +5,7 @@ from app.api.departments import department
 from app.api.employees import employee
 from app.api.auth import auth
 from app.api.leave_types import leave_type
+from app. api.leave_balances import leave_balance
 import app.models.__init__
 
 app=FastAPI()
@@ -14,4 +15,5 @@ app.include_router(auth)
 app.include_router(department)
 app.include_router(employee)
 app.include_router(leave_type)
+app.include_router(leave_balance)
 

@@ -120,6 +120,12 @@ def get_employee_by_id(employee_id:int,db:Session):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
 
+def get_employee_by_code(employee_code:str,db:Session):
+    try:
+        return db.query(Employee).filter(Employee.employee_code.ilike(employee_code)).first()
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
+
 
         
     
