@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from sqlalchemy.orm import Session
 from app.models.leave_balance_model import LeaveBalance
 from app.models.employee_model import Employee
@@ -109,6 +111,26 @@ def get_all_leave_balance_of_employee_by_manager(employee_id:int,department_id:i
                                                             Employee.employee_id==employee_id,Employee.department_id==department_id).all()
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
+
+def get_leave_balance_of_employee_by_leave_type(employee_id:int,leave_type_id:int,year:int,db:Session):
+    try:
+        return db.query(LeaveBalance).filter(LeaveBalance.employee_id==employee_id,LeaveBalance.leave_type_id==leave_type_id,
+                                             LeaveBalance.year==year).first()
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
+
+def restore_leave_balance(employee_id:int,leave_type_id:int,year:int,days_requested:Decimal,db:Session):
+    try:
+        leave_balance = db.query(LeaveBalance).filter(LeaveBalance.employee_id == employee_id,
+            LeaveBalance.leave_type_id == leave_type_id,LeaveBalance.year == year
+            ).with_for_update().first()
+        if leave_balance is not None:
+            leave_balance.used_days -= days_requested
+            db.flush()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
+
 
 
 

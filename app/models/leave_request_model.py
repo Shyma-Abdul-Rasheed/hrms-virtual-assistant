@@ -11,7 +11,7 @@ class LeaveRequest(Base):
     leave_type_id = Column(Integer,ForeignKey("leave_types.leave_type_id"),nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
-    days_requested = Column(Numeric(5, 2),nullable=False)
+    days_requested = Column(Numeric(2, 1),nullable=False)
     reason = Column(String, nullable=True)
     status = Column(String,nullable=False,default="pending",server_default=text("'pending'"))
     created_at=Column(DateTime,default=datetime.now,server_default=func.now())
