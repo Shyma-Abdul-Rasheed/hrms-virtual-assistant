@@ -1,11 +1,10 @@
-from decimal import Decimal
 from fastapi import HTTPException,status
-from datetime import date, timedelta
+from datetime import date
 from app.models.leave_approval_model import LeaveApproval
 from app.schemas.leave_approval_schema import LeaveApprovalCreate
 from sqlalchemy.orm import Session
 from app.repositories.leave_approval_repo import (create_new_leave_approval,get_all_leave_approvals,get_all_leave_approvals_by_manager,get_one_leave_approval,
-        get_leave_approval_by_id,get_one_leave_approval_by_manager,get_all_leave_approval_of_employee,get_all_leave_approval_of_employee_by_manager,existing_leave_approval)
+        get_one_leave_approval_by_manager,get_all_leave_approval_of_employee,get_all_leave_approval_of_employee_by_manager,existing_leave_approval)
 from app.repositories.employee_repo import get_employee_by_id
 from app.repositories.leave_balance_repo import get_leave_balance_for_update
 from app.repositories.leave_request_repo import get_leave_request_by_id_for_update
@@ -20,6 +19,8 @@ def create(request:LeaveApprovalCreate,user_id:int,role:str,db:Session):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No such leave requests")
         if leave_request.status != "pending":
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Only pending leave requests can be processed")
+        if date.today() >= leave_request.start_date:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="The request has start date less than today")
         approver=get_employee_by_id(user_id,db)
         if approver is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="You cannot approve to this leave request")
@@ -49,52 +50,46 @@ def create(request:LeaveApprovalCreate,user_id:int,role:str,db:Session):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
-# def  view_all(user_id:int,role:str,db:Session):
-#     try:
-#         if role=='manager':
-#             employee=get_employee_by_id(user_id,db)
-#             leave_approval=get_all_leave_approvals_by_manager(employee.department_id,db)
-#         else:
-#             leave_approval=get_all_leave_approvals(db)
-#         return leave_approval
-#     except Exception as e:
-#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+def  view_all(user_id:int,role:str,db:Session):
+    try:
+        if role=='manager':
+            employee=get_employee_by_id(user_id,db)
+            leave_approval=get_all_leave_approvals_by_manager(employee.department_id,db)
+        else:
+            leave_approval=get_all_leave_approvals(db)
+        return leave_approval
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
-# def view_one(leave_approval_id:int,user_id:int,role:str,db:Session):
-#     try:
-#         if role=='manager':
-#             employee=get_employee_by_id(user_id,db)
-#             leave_approval=get_one_leave_approval_by_manager(leave_approval_id,employee.department_id,db)
-#             if leave_approval is None:
-#                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="You cannot view this employee")        
-#         else:
-#             leave_approval=get_one_leave_approval(leave_approval_id,db)
-#             if leave_approval is None:
-#                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="LeaveApproval not found")        
-#         return leave_approval
-#     except Exception as e:
-#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e)) 
+def view_one(leave_approval_id:int,user_id:int,role:str,db:Session):
+    try:
+        if role=='manager':
+            employee=get_employee_by_id(user_id,db)
+            leave_approval=get_one_leave_approval_by_manager(leave_approval_id,employee.department_id,db)
+            if leave_approval is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="You cannot view this employee")        
+        else:
+            leave_approval=get_one_leave_approval(leave_approval_id,db)
+            if leave_approval is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="LeaveApproval not found")        
+        return leave_approval
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e)) 
 
-# def view_all_leave_approval_of_employee(employee_id,user_id:int,role:str,db:Session):
-#     try:
-#         if role=='manager':
-#             employee=get_employee_by_id(user_id,db)
-#             leave_approval=get_all_leave_approval_of_employee_by_manager(employee_id,employee.department_id,db)
-#             if not leave_approval:
-#                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="You cannot view this employee")
-#         else:
-#             leave_approval=get_all_leave_approval_of_employee(employee_id,db)
-#             if not leave_approval:
-#                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Employee or leave balances not found")
-#         return leave_approval
-#     except Exception as e:
-#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
-
-# def view_me(employee_id:int,db:Session):
-#     try:
-#         return get_all_leave_approval_of_employee(employee_id,db)
-#     except Exception as e:
-#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+def view_all_leave_approval_of_employee(employee_id,user_id:int,role:str,db:Session):
+    try:
+        if role=='manager':
+            employee=get_employee_by_id(user_id,db)
+            leave_approval=get_all_leave_approval_of_employee_by_manager(employee_id,employee.department_id,db)
+            if not leave_approval:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="You cannot view this employee")
+        else:
+            leave_approval=get_all_leave_approval_of_employee(employee_id,db)
+            if not leave_approval:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Employee or leave balances not found")
+        return leave_approval
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
 
 
   
