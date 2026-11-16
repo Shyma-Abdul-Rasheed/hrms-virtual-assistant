@@ -15,7 +15,7 @@ class LeaveRequestCreate(BaseModel):
     leave_type_name: str
     start_date: date
     end_date: date
-    is_half_day: bool = False
+    is_half_day: bool = False 
     reason: str | None = None
     class Config:
         from_attributes=True

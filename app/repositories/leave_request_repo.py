@@ -11,7 +11,7 @@ def existing_leave_request(employee_id:int,start_date:date,end_date:date,db:Sess
         query=db.query(LeaveRequest).filter(LeaveRequest.employee_id==employee_id,LeaveRequest.start_date<=end_date,
                 LeaveRequest.end_date>=start_date,LeaveRequest.status.in_(["pending", "approved"]))
         if exclude_id is not None:
-            query.filter(LeaveRequest.leave_request_id!=exclude_id)
+            query=query.filter(LeaveRequest.leave_request_id!=exclude_id)
         return query.first()
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
@@ -31,7 +31,7 @@ def get_all_leave_requests(db:Session):
         return db.query(LeaveRequest.leave_request_id,Employee.employee_code,Employee.full_name,
                         Department.department_name,LeaveType.leave_type_name,LeaveRequest.start_date,
                         LeaveRequest.end_date,LeaveRequest.days_requested,
-                        LeaveRequest.reason,LeaveRequest.status,LeaveRequest.created_at).join(
+                        LeaveRequest.reason,LeaveRequest.status,LeaveRequest.created_at.label("submitted_at")).join(
                             Employee,Employee.employee_id==LeaveRequest.employee_id).join(
                                 LeaveType,LeaveType.leave_type_id==LeaveRequest.leave_type_id).join(
                                     Department,Employee.department_id==Department.department_id).all()
@@ -43,7 +43,7 @@ def get_all_leave_requests_by_manager(department_id:int,db:Session):
         return db.query(LeaveRequest.leave_request_id,Employee.employee_code,Employee.full_name,
                                 Department.department_name,LeaveType.leave_type_name,LeaveRequest.start_date,
                                 LeaveRequest.end_date,LeaveRequest.days_requested,
-                                LeaveRequest.reason,LeaveRequest.status,LeaveRequest.created_at).join(
+                                LeaveRequest.reason,LeaveRequest.status,LeaveRequest.created_at.label("submitted_at")).join(
                                     Employee,Employee.employee_id==LeaveRequest.employee_id).join(
                                         LeaveType,LeaveType.leave_type_id==LeaveRequest.leave_type_id).join(
                                             Department,Employee.department_id==Department.department_id).filter(
@@ -80,6 +80,12 @@ def get_one_leave_request_by_manager(leave_request_id:int,department_id:int,db:S
 def get_leave_request_by_id(leave_request_id:int,db:Session):
     try:
         return db.query(LeaveRequest).filter(LeaveRequest.leave_request_id==leave_request_id).first()
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
+
+def get_leave_request_by_id_for_update(leave_request_id:int,db:Session):
+    try:
+        return db.query(LeaveRequest).filter(LeaveRequest.leave_request_id==leave_request_id).with_for_update().first()
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
 

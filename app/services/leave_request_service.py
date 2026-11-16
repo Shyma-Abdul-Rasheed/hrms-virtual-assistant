@@ -1,5 +1,4 @@
 from decimal import Decimal
-
 from fastapi import HTTPException,status
 from datetime import date, timedelta
 from app.models.leave_request_model import LeaveRequest
@@ -106,6 +105,9 @@ def update(leave_request_id:int,user_id:int,request:LeaveRequestUpdate,db:Sessio
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="You cannot cancel this leave request")
             # If already approved, restore the deducted leave balance.
             if leave_request.status=="approved":
+                # Cancellation must happen before the leave start date
+                if date.today() >= leave_request.start_date:
+                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Approved leave can only be cancelled before its start date")
                 leave_balance=get_leave_balance_of_employee_by_leave_type(user_id,leave_request.leave_type_id,leave_request.start_date.year,db)
                 if leave_balance is None:
                     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Leave balance not found")

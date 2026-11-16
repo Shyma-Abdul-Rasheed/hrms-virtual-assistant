@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from app.db.connections import Base,engine
 from app.api.health import router
 from app.api.departments import department
@@ -7,6 +7,7 @@ from app.api.auth import auth
 from app.api.leave_types import leave_type
 from app. api.leave_balances import leave_balance
 from app.api.leave_requests import leave_request
+from app.api.leave_approvals import leave_approval
 import app.models.__init__
 
 app=FastAPI()
@@ -18,4 +19,5 @@ app.include_router(employee)
 app.include_router(leave_type)
 app.include_router(leave_balance)
 app.include_router(leave_request)
+app.include_router(leave_approval)
 

@@ -67,6 +67,13 @@ def get_leave_balance_by_id(leave_balance_id:int,db:Session):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
 
+def get_leave_balance_for_update(employee_id:int,leave_type_id:int,year:int,db:Session):
+    try:
+        return db.query(LeaveBalance).filter(LeaveBalance.employee_id==employee_id,
+             LeaveBalance.leave_type_id==leave_type_id,LeaveBalance.year==year).with_for_update().first()
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
+
 def update_leave_balance(leave_balance:LeaveBalance,db:Session):
     try:
         db.commit()

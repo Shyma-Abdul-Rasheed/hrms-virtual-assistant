@@ -7,7 +7,7 @@ class LeaveApproval(Base):
     __tablename__="leave_approvals"
     leave_approval_id=Column(Integer,primary_key=True,index=True)
     approver_id=Column(Integer,ForeignKey("employees.employee_id"),nullable=False)
-    leave_request_id=Column(Integer,ForeignKey("leave_requests.leave_request_id"),nullable=False)
+    leave_request_id=Column(Integer,ForeignKey("leave_requests.leave_request_id"),nullable=False,unique=True)
     decision=Column(String,nullable=False)
     comments=Column(String,nullable=True)
     approved_at=Column(DateTime,default=datetime.now,server_default=func.now())

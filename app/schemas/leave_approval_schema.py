@@ -1,6 +1,7 @@
 from pydantic import BaseModel,Field
 from typing import Literal
-from datetime import datetime
+from datetime import datetime,date
+from decimal import Decimal
 
 class LeaveApprovalCreate(BaseModel):
     leave_request_id: int
@@ -9,18 +10,14 @@ class LeaveApprovalCreate(BaseModel):
     class Config:
             from_attributes=True
 
-class LeaveApprovalUpdate(BaseModel):
-      decision:Literal["approved", "rejected"] | None = None
-      comments:str | None = None
-      class Config:
-        from_attributes=True
-
-
-class LeaveApprovalResponse(BaseModel):
+class LeaveApprovalShow(BaseModel):
+    leave_approval_id:int
     full_name: str
-    role:str
+    department_name:str
     leave_type_name:str
-    leave_request_id: int
+    start_date:date
+    end_date:date
+    requested_days:Decimal
     decision: Literal["approved", "rejected"]
     comments: str | None
     approved_at:datetime

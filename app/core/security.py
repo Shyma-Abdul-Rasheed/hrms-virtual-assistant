@@ -25,7 +25,7 @@ def verify_password(hash:str,plain:str)->bool:
     
 def create_jwt_token(user_id:int,user_role:str)->str:
     try:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=30)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=60)
         payload={"user_id":user_id,"user_role":user_role,"jti":str(uuid4()),"exp":expire}
         token=jwt.encode(payload,os.getenv("SECRET_KEY"),algorithm="HS256")
         return token
