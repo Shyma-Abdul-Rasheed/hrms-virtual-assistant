@@ -13,6 +13,8 @@ async def employee_signup(request:EmployeeSignup,db:Session):
         user=existing_employee(request.email,db)
         if not user:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Error in provided information")
+        if not user.is_active:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Your acount is inactive. Contact HR")
         if request.full_name==user.full_name and request.email==user.email:
             hash=hash_password(request.password)
             user.hashed_password=hash
@@ -27,7 +29,8 @@ async def employee_login(request:EmployeeLogin,db:Session):
         user=existing_employee(request.email,db)
         if user is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Invalid credentials")
-        
+        if not user.is_active:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Your acount is inactive. Contact HR")
         match=verify_password(user.hashed_password,request.password)
         if match is False:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Invalid credentials")
