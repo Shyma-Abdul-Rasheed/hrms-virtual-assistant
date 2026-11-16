@@ -21,10 +21,12 @@ class DocumentRequestStatusUpdate(BaseModel):
     class Config:
         from_attributes=True
 
-class DocumentRequestResponse(BaseModel):
+class DocumentRequestShow(BaseModel):
+    document_request_id:int
     employee_code: str
     full_name:str
     designation:str
+    department_name:str
     document_type_name: str
     purpose: str | None
     status: str

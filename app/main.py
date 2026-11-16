@@ -9,6 +9,7 @@ from app. api.leave_balances import leave_balance
 from app.api.leave_requests import leave_request
 from app.api.leave_approvals import leave_approval
 from app.api.document_types import document_type
+from app.api.document_requests import document_request
 import app.models.__init__
 
 app=FastAPI()
@@ -22,4 +23,5 @@ app.include_router(leave_balance)
 app.include_router(leave_request)
 app.include_router(leave_approval)
 app.include_router(document_type)
+app.include_router(document_request)
 

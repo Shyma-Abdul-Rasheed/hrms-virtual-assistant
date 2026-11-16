@@ -29,7 +29,7 @@ def get_one_document_type(document_type_id:int,db:Session):
     try:
         return db.query(DocumentType.document_type_id,DocumentType.document_type_name,
                         DocumentType.description,DocumentType.requires_hr_approval,DocumentType.is_active).filter(
-                        DocumentType.document_type_id==document_type_id).first()
+                            DocumentType.document_type_id==document_type_id).first()
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=str(e))
 
