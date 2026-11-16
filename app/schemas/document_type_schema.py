@@ -17,6 +17,7 @@ class DocumentTypeUpdate(BaseModel):
         from_attributes=True
 
 class DocumentTypeShow(BaseModel):
+    document_type_id:int
     document_type_name: str
     description: str | None
     requires_hr_approval: bool
